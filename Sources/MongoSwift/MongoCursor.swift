@@ -1,4 +1,4 @@
-import mongoc
+import CLibMongoC
 
 internal let ClosedCursorError = UserError.logicError(message: "Cannot advance a completed or failed cursor.")
 

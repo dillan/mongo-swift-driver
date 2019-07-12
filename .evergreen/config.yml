@@ -202,7 +202,7 @@ tasks:
             MONGODB_VERSION: "3.6"
             TOPOLOGY: "replica_set"
         - func: "run tests"
-        - func: "stop mongo-orchestration"       
+        - func: "stop mongo-orchestration"
 
     - name: "test-3.6-sharded_cluster"
       tags: ["3.6", "sharded_cluster"]
@@ -214,7 +214,7 @@ tasks:
             MONGODB_VERSION: "3.6"
             TOPOLOGY: "sharded_cluster"
         - func: "run tests"
-        - func: "stop mongo-orchestration"      
+        - func: "stop mongo-orchestration"
 
     - name: "test-4.0-standalone"
       tags: ["4.0", "standalone"]
@@ -405,7 +405,7 @@ axes:
 buildvariants:
 
 - matrix_name: "tests-all"
-  matrix_spec: 
+  matrix_spec:
     os-fully-featured: "*"
     swift-version: "*"
     ssl: "*"
@@ -435,7 +435,7 @@ buildvariants:
       remove_tasks: ".sharded_cluster"
 
 - matrix_name: "atlas-connect"
-  matrix_spec: 
+  matrix_spec:
     os-fully-featured: ubuntu-18.04
     swift-version: "*"
   display_name: "Atlas Connectivity ${swift-version} ${os-fully-featured}"
