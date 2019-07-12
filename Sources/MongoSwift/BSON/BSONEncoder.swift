@@ -1,5 +1,5 @@
 import Foundation
-import mongoc
+import CLibMongoC
 
 /// `BSONEncoder` facilitates the encoding of `Encodable` values into BSON.
 public class BSONEncoder {

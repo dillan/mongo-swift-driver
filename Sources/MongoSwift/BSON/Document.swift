@@ -1,5 +1,5 @@
-import bson
 import Foundation
+import CLibMongoC
 
 #if compiler(>=5.0)
 internal typealias BSONPointer = OpaquePointer

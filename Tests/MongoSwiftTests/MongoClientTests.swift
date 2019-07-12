@@ -1,5 +1,5 @@
 import Foundation
-import mongoc
+import CLibMongoC
 @testable import MongoSwift
 import Nimble
 import XCTest

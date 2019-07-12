@@ -1,5 +1,5 @@
 import Foundation
-import mongoc
+import CLibMongoC
 
 /// A protocol for monitoring events to implement, specifying their name.
 public protocol MongoEvent {

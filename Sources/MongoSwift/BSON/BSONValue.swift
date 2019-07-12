@@ -1,5 +1,5 @@
-import bson
 import Foundation
+import CLibMongoC
 
 /// The possible types of BSON values and their corresponding integer values.
 public enum BSONType: UInt32 {

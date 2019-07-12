@@ -1,4 +1,4 @@
-import mongoc
+import CLibMongoC
 
 /// Options to set on a retrieved `MongoCollection`.
 public struct CollectionOptions: CodingStrategyProvider {

@@ -1,5 +1,5 @@
 import Foundation
-import mongoc
+import CLibMongoC
 
 /// An extension of `Document` to make it conform to the `Sequence` protocol.
 /// This allows you to iterate through the (key, value) pairs, for example:

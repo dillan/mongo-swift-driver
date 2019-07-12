@@ -1,5 +1,5 @@
 import Foundation
-import mongoc
+import CLibMongoC
 
 /// A struct representing a server connection, consisting of a host and port.
 public struct ConnectionId: Equatable {

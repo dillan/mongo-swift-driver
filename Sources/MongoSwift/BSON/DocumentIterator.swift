@@ -1,5 +1,5 @@
 import Foundation
-import mongoc
+import CLibMongoC
 
 #if compiler(>=5.0)
 internal typealias BSONIterPointer = OpaquePointer
