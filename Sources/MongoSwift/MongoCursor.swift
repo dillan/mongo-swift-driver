@@ -197,11 +197,14 @@ public class MongoCursor<T: Codable>: Sequence, IteratorProtocol {
      *   - `DecodingError` if an error occurs decoding the server's response.
      */
     public func nextOrError() throws -> T? {
-        if let next = self.next() {
-            return next
-        }
-        if let error = self.error {
-            throw error
+        let next = self.next()
+        if let next = next {
+            switch next {
+            case .success(let doc):
+                return doc
+            case .failure(let error):
+                throw error
+            }
         }
         return nil
     }
@@ -209,25 +212,32 @@ public class MongoCursor<T: Codable>: Sequence, IteratorProtocol {
     /// Returns the next `Document` in this cursor, or `nil`. After this function returns `nil`, the caller should use
     /// the `.error` property to check for errors. For tailable cursors, users should also check `isAlive` after this
     /// method returns `nil`, to determine if the cursor has the potential to return any more data in the future.
-    public func next() -> T? {
+    public func next() -> Result<T, Error>? {
         if case let .cached(doc) = self.cached {
             self.cached = .none
-            return doc
+            if let doc = doc {
+                return .success(doc)
+            }
+            return nil
         }
 
         // We already closed the mongoc cursor, either because we reached the end or encountered an error.
         guard case let .open(_, connection, client, session) = self.state else {
             self.error = ClosedCursorError
-            return nil
+            return .failure(ClosedCursorError)
         }
 
         let operation = NextOperation(target: .cursor(self))
         do {
-            return try client.executeOperation(operation, using: connection, session: session)
+            let result = try client.executeOperation(operation, using: connection, session: session)
+            if let result = result {
+                return .success(result)
+            }
+            return nil
         } catch {
             // This indicates that an error occurred executing the `NextOperation`.
             self.error = error
-            return nil
+            return .failure(error)
         }
     }
 }
