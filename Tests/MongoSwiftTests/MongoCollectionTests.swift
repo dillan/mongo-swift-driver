@@ -209,8 +209,8 @@ final class MongoCollectionTests: MongoSwiftTestCase {
 
     func testFind() throws {
         let findResult = try coll.find(["cat": "cat"])
-        expect(findResult.next()).to(equal(["_id": 2, "cat": "cat"]))
-        expect(findResult.next()).to(beNil())
+        expect(try findResult.nextOrError()).to(equal(["_id": 2, "cat": "cat"]))
+        expect(try findResult.nextOrError()).to(beNil())
     }
 
     func testFindOne() throws {

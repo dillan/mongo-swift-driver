@@ -180,7 +180,7 @@ final class MongoClientTests: MongoSwiftTestCase {
         let customDbId: BSON = "customDb"
         try collDb.insertOne(wrapperWithId(customDbId.stringValue!))
 
-        doc = try collDoc.find(["_id": customDbId]).next()
+        doc = try collDoc.find(["_id": customDbId]).nextOrError()
         expect(doc).toNot(beNil())
         expect(doc?["date"]?.doubleValue).to(beCloseTo(date.timeIntervalSinceReferenceDate, within: 0.001))
         expect(doc?["uuid"]?.binaryValue).to(equal(try Binary(from: uuid)))

@@ -139,6 +139,7 @@ final class MongoDatabaseTests: MongoSwiftTestCase {
             info: viewInfo,
             idIndex: nil
         )
+        
         expect(collectionInfo[1]).to(equal(expectedView))
 
         expect(collectionInfo[2].name).to(equal("system.views"))
