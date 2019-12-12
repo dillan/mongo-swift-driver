@@ -176,9 +176,9 @@ private class CrudTest {
         }
         expect(try BSON.array(collToCheck.find([:]).map {
             switch $0 {
-            case .success(let doc):
+            case let .success(doc):
                 return .document(doc)
-            case .failure(let error):
+            case let .failure(error):
                 throw error
             }
         })).to(equal(collection["data"]))
@@ -230,9 +230,9 @@ private class AggregateTest: CrudTest {
             // if not $out, verify that the cursor contains the expected documents.
             expect(try BSON.array(cursor.map {
                 switch $0 {
-                case .success(let doc):
+                case let .success(doc):
                     return .document(doc)
-                case .failure(let error):
+                case let .failure(error):
                     throw error
                 }
             })).to(equal(self.result))
@@ -371,9 +371,9 @@ private class FindTest: CrudTest {
         )
         let result = BSON.array(try coll.find(filter, options: options).map {
             switch $0 {
-            case .success(let doc):
+            case let .success(doc):
                 return .document(doc)
-            case .failure(let error):
+            case let .failure(error):
                 throw error
             }
         })

@@ -385,16 +385,15 @@ extension MongoCollection {
         let models = try self._client.executeOperation(operation, session: session)
         let names: [String] = try models.map { model in
             switch model {
-            case .success(let model):
+            case let .success(model):
                 guard let name = model.options?.name else {
                     throw RuntimeError.internalError(message: "Server response missing a 'name' field")
                 }
                 return name
             // ensure no cursor error occurred
-            case .failure(let error):
+            case let .failure(error):
                 throw error
             }
-            
         }
         return names
     }

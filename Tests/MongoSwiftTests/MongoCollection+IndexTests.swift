@@ -107,9 +107,9 @@ final class MongoCollection_IndexTests: MongoSwiftTestCase {
 
         var indexOptions: [IndexOptions] = try self.coll.listIndexes().map {
             switch $0 {
-            case .success(let index):
-                index.options ?? IndexOptions()
-            case .failure(let error):
+            case let .success(index):
+                return index.options ?? IndexOptions()
+            case let .failure(error):
                 throw error
             }
         }

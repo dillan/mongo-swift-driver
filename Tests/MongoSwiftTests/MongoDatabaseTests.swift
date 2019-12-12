@@ -115,9 +115,16 @@ final class MongoDatabaseTests: MongoSwiftTestCase {
 
         expect(try db.createCollection("fooView", options: viewOptions)).toNot(throwError())
 
-        var collectionInfo = try Array(db.listCollections())
+        var collectionInfo = try Array(db.listCollections()).map { (res) -> CollectionSpecification in
+            switch res {
+            case let .success(collectionSpecification):
+                return collectionSpecification
+            case let .failure(error):
+                throw error
+            }
+        }
+//        var collectionInfo = try Array(db.listCollections())
         collectionInfo.sort { $0.name < $1.name }
-
         expect(collectionInfo).to(haveCount(3))
 
         let fooInfo = CollectionSpecificationInfo(readOnly: false, uuid: UUID())
@@ -139,7 +146,7 @@ final class MongoDatabaseTests: MongoSwiftTestCase {
             info: viewInfo,
             idIndex: nil
         )
-        
+
         expect(collectionInfo[1]).to(equal(expectedView))
 
         expect(collectionInfo[2].name).to(equal("system.views"))

@@ -29,7 +29,14 @@ enum TestOperationResult: Decodable, Equatable {
     }
 
     public init<T: Codable>(from cursor: MongoCursor<T>) throws {
-        let result = try cursor.map { BSON.document(try BSONEncoder().encode($0)) }
+        let result = try cursor.map { (res) -> BSON in
+            switch res {
+            case let .success(T):
+                return BSON.document(try BSONEncoder().encode(T))
+            case let .failure(error):
+                throw error
+            }
+        }
         guard cursor.error == nil else {
             throw cursor.error!
         }

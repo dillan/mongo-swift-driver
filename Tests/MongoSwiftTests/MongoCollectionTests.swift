@@ -100,7 +100,14 @@ final class MongoCollectionTests: MongoSwiftTestCase {
     }
 
     func testAggregate() throws {
-        expect(Array(try self.coll.aggregate([["$project": ["_id": 0, "cat": 1]]])))
+        expect(Array(try self.coll.aggregate([["$project": ["_id": 0, "cat": 1]]]).map { (res) -> Document in
+            switch res {
+            case let .success(doc):
+                return doc
+            case let .failure(error):
+                throw error
+            }
+        }))
             .to(equal([["cat": "dog"], ["cat": "cat"]] as [Document]))
     }
 
@@ -332,6 +339,7 @@ final class MongoCollectionTests: MongoSwiftTestCase {
         let client = try MongoClient.makeTestClient()
         let db = client.db(type(of: self).testDatabase)
         let coll1 = try db.createCollection(self.getCollectionName(suffix: "codable"), withType: Basic.self)
+            
         defer { try? coll1.drop() }
 
         let b1 = Basic(x: 1, y: "hi")
@@ -345,8 +353,13 @@ final class MongoCollectionTests: MongoSwiftTestCase {
         try coll1.replaceOne(filter: ["x": 2], replacement: b4)
         expect(try coll1.countDocuments()).to(equal(3))
 
-        for doc in try coll1.find() {
-            expect(doc).to(beAnInstanceOf(Basic.self))
+        for res in try coll1.find() {
+            switch res {
+            case .success(let doc):
+                expect(doc).to(beAnInstanceOf(Basic.self))
+            case .failure(let error):
+                throw error
+            }
         }
 
         // find one and replace w/ collection type replacement

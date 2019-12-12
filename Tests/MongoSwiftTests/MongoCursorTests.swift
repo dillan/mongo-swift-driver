@@ -23,7 +23,14 @@ final class MongoCursorTests: MongoSwiftTestCase {
             // insert and read out one document
             try coll.insertOne(doc1)
             cursor = try coll.find()
-            var results = Array(cursor)
+            var results = try Array(cursor).map { (res) -> Document in
+                switch res {
+                case let .success(doc):
+                    return doc
+                case let .failure(error):
+                    throw error
+                }
+            }
             expect(results).to(haveCount(1))
             expect(results[0]).to(equal(doc1))
             // cursor should be closed now that its exhausted
@@ -33,7 +40,14 @@ final class MongoCursorTests: MongoSwiftTestCase {
 
             try coll.insertMany([doc2, doc3])
             cursor = try coll.find()
-            results = Array(cursor)
+            results = try Array(cursor).map { (res) -> Document in
+                switch res {
+                case let .success(doc):
+                    return doc
+                case let .failure(error):
+                    throw error
+                }
+            }
             expect(results).to(haveCount(3))
             expect(results).to(equal([doc1, doc2, doc3]))
             // cursor should be closed now that its exhausted
@@ -76,20 +90,27 @@ final class MongoCursorTests: MongoSwiftTestCase {
 
             // for each doc we insert, check that it arrives in the cursor next,
             // and that the cursor is still alive afterward
-            let checkNextResult: (Document) -> Void = { doc in
-                let results = Array(cursor)
+            let checkNextResult: (Document) throws -> Void = { doc in
+                let results = try Array(cursor).map { (res) -> Document in
+                    switch res {
+                    case let .success(doc):
+                        return doc
+                    case let .failure(error):
+                        throw error
+                    }
+                }
                 expect(results).to(haveCount(1))
                 expect(results[0]).to(equal(doc))
                 expect(cursor.error).to(beNil())
                 expect(cursor.isAlive).to(beTrue())
             }
-            checkNextResult(doc1)
+            try checkNextResult(doc1)
 
             try coll.insertOne(doc2)
-            checkNextResult(doc2)
+            try checkNextResult(doc2)
 
             try coll.insertOne(doc3)
-            checkNextResult(doc3)
+            try checkNextResult(doc3)
 
             // no more docs, but should still be alive
             expect(try cursor.nextOrError()).to(beNil())

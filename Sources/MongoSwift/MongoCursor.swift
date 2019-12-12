@@ -200,9 +200,9 @@ public class MongoCursor<T: Codable>: Sequence, IteratorProtocol {
         let next = self.next()
         if let next = next {
             switch next {
-            case .success(let doc):
+            case let .success(doc):
                 return doc
-            case .failure(let error):
+            case let .failure(error):
                 throw error
             }
         }

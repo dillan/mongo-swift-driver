@@ -120,7 +120,14 @@ final class RetryableWritesTests: MongoSwiftTestCase, FailPointConfigured {
                 }
 
                 let verifyColl = db.collection(test.outcome.collection.name ?? collection.name)
-                let foundDocs = try Array(verifyColl.find())
+                let foundDocs = try Array(verifyColl.find()).map { (res) -> Document in
+                    switch res {
+                    case let .success(doc):
+                        return doc
+                    case let .failure(error):
+                        throw error
+                    }
+                }
                 expect(foundDocs.count).to(equal(test.outcome.collection.data.count))
                 zip(foundDocs, test.outcome.collection.data).forEach {
                     expect($0).to(sortedEqual($1), description: test.description)

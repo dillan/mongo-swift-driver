@@ -203,13 +203,13 @@ final class MongoCollection_BulkWriteTests: MongoSwiftTestCase {
         expect(result.deletedCount).to(equal(2))
 
         let cursor = try coll.find()
-        expect(try cursor.nextOrError).to(equal(["_id": 2, "x": 24]))
-        expect(try cursor.nextOrError).to(equal(["_id": 3, "x": 34]))
-        expect(try cursor.nextOrError).to(equal(["_id": 4, "x": 44]))
-        expect(try cursor.nextOrError).to(beNil()) // cursor ends
+        expect(try cursor.nextOrError()).to(equal(["_id": 2, "x": 24]))
+        expect(try cursor.nextOrError()).to(equal(["_id": 3, "x": 34]))
+        expect(try cursor.nextOrError()).to(equal(["_id": 4, "x": 44]))
+        expect(cursor.next()).to(beNil()) // cursor ends
         expect(cursor.error).to(beNil())
-        expect(try cursor.nextOrError).to(beNil()) // iterate after cursor ends
-        expect(cursor.error as? UserError).to(equal(UserError.logicError(message: "")))
+        expect(try cursor.nextOrError()).to(throwError(UserError.logicError(message: ""))) // iterate after cursor ends
+//        expect(cursor.error as? UserError).to(equal(UserError.logicError(message: "")))
     }
 
     func testUnacknowledgedWriteConcern() throws {
