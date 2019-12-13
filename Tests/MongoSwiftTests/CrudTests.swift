@@ -174,16 +174,7 @@ private class CrudTest {
         if let name = collection["name"]?.stringValue {
             collToCheck = db.collection(name)
         }
-        expect(try BSON.array(collToCheck.find([:])
-            .map {
-            switch $0 {
-            case let .success(doc):
-                return .document(doc)
-            case let .failure(error):
-                throw error
-            }
-        }
-            )).to(equal(collection["data"]))
+        expect(BSON.array(try collToCheck.find([:]).all().map { .document($0) })).to(equal(collection["data"]))
     }
 
     // Given an `UpdateResult`, verify that it matches the expected results in this `CrudTest`.
@@ -230,14 +221,7 @@ private class AggregateTest: CrudTest {
             expect(cursor.next()).to(beNil())
         } else {
             // if not $out, verify that the cursor contains the expected documents.
-            expect(try BSON.array(cursor.map {
-                switch $0 {
-                case let .success(doc):
-                    return .document(doc)
-                case let .failure(error):
-                    throw error
-                }
-            })).to(equal(self.result))
+            expect(BSON.array(try cursor.all().map { .document($0) })).to(equal(self.result))
         }
     }
 }
@@ -371,14 +355,7 @@ private class FindTest: CrudTest {
             skip: self.skip,
             sort: self.sort
         )
-        let result = BSON.array(try coll.find(filter, options: options).map {
-            switch $0 {
-            case let .success(doc):
-                return .document(doc)
-            case let .failure(error):
-                throw error
-            }
-        })
+        let result = BSON.array(try coll.find(filter, options: options).all().map { .document($0) })
         expect(result).to(equal(self.result))
     }
 }

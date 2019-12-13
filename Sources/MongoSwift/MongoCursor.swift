@@ -208,13 +208,13 @@ public class MongoCursor<T: Codable>: Sequence, IteratorProtocol {
         }
         return nil
     }
-    
+
     public func all() throws -> [T] {
         return try self.map {
             switch $0 {
-            case .success(let t):
+            case let .success(t):
                 return t
-            case .failure(let error):
+            case let .failure(error):
                 throw error
             }
         }
