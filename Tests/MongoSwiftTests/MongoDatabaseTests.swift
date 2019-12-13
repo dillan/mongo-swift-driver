@@ -112,9 +112,7 @@ final class MongoDatabaseTests: MongoSwiftTestCase {
             pipeline: [["$project": ["a": 1]]],
             viewOn: "foo"
         )
-
         expect(try db.createCollection("fooView", options: viewOptions)).toNot(throwError())
-
 
         var collectionInfo = try Array(db.listCollections().all())
         collectionInfo.sort { $0.name < $1.name }
