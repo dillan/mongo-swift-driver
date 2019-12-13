@@ -383,17 +383,11 @@ extension MongoCollection {
     public func listIndexNames(session: ClientSession? = nil) throws -> [String] {
         let operation = ListIndexesOperation(collection: self)
         let models = try self._client.executeOperation(operation, session: session)
-        let names: [String] = try models.map { model in
-            switch model {
-            case let .success(model):
-                guard let name = model.options?.name else {
-                    throw RuntimeError.internalError(message: "Server response missing a 'name' field")
-                }
-                return name
-            // ensure no cursor error occurred
-            case let .failure(error):
-                throw error
+        let names: [String] = try models.all().map { model in
+            guard let name = model.options?.name else {
+                throw RuntimeError.internalError(message: "Server response missing a 'name' field")
             }
+            return name
         }
         return names
     }

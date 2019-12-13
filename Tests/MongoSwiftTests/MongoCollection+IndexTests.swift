@@ -105,14 +105,7 @@ final class MongoCollection_IndexTests: MongoSwiftTestCase {
         let ttlModel = IndexModel(keys: ["cat": 1], options: ttlOptions)
         expect(try self.coll.createIndex(ttlModel)).to(equal("ttl"))
 
-        var indexOptions: [IndexOptions] = try self.coll.listIndexes().map {
-            switch $0 {
-            case let .success(index):
-                return index.options ?? IndexOptions()
-            case let .failure(error):
-                throw error
-            }
-        }
+        var indexOptions: [IndexOptions] = try self.coll.listIndexes().all().map { $0.options ?? IndexOptions() }
         indexOptions.sort { $0.name! < $1.name! }
         expect(indexOptions).to(haveCount(3))
 

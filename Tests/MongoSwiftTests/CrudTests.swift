@@ -174,14 +174,16 @@ private class CrudTest {
         if let name = collection["name"]?.stringValue {
             collToCheck = db.collection(name)
         }
-        expect(try BSON.array(collToCheck.find([:]).map {
+        expect(try BSON.array(collToCheck.find([:])
+            .map {
             switch $0 {
             case let .success(doc):
                 return .document(doc)
             case let .failure(error):
                 throw error
             }
-        })).to(equal(collection["data"]))
+        }
+            )).to(equal(collection["data"]))
     }
 
     // Given an `UpdateResult`, verify that it matches the expected results in this `CrudTest`.

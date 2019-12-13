@@ -23,14 +23,7 @@ final class MongoCursorTests: MongoSwiftTestCase {
             // insert and read out one document
             try coll.insertOne(doc1)
             cursor = try coll.find()
-            var results = try Array(cursor).map { (res) -> Document in
-                switch res {
-                case let .success(doc):
-                    return doc
-                case let .failure(error):
-                    throw error
-                }
-            }
+            var results = try Array(cursor.all())
             expect(results).to(haveCount(1))
             expect(results[0]).to(equal(doc1))
             // cursor should be closed now that its exhausted
@@ -40,14 +33,7 @@ final class MongoCursorTests: MongoSwiftTestCase {
 
             try coll.insertMany([doc2, doc3])
             cursor = try coll.find()
-            results = try Array(cursor).map { (res) -> Document in
-                switch res {
-                case let .success(doc):
-                    return doc
-                case let .failure(error):
-                    throw error
-                }
-            }
+            results = try Array(cursor.all())
             expect(results).to(haveCount(3))
             expect(results).to(equal([doc1, doc2, doc3]))
             // cursor should be closed now that its exhausted
@@ -91,14 +77,7 @@ final class MongoCursorTests: MongoSwiftTestCase {
             // for each doc we insert, check that it arrives in the cursor next,
             // and that the cursor is still alive afterward
             let checkNextResult: (Document) throws -> Void = { doc in
-                let results = try Array(cursor).map { (res) -> Document in
-                    switch res {
-                    case let .success(doc):
-                        return doc
-                    case let .failure(error):
-                        throw error
-                    }
-                }
+                let results = try Array(cursor.all())
                 expect(results).to(haveCount(1))
                 expect(results[0]).to(equal(doc))
                 expect(cursor.error).to(beNil())

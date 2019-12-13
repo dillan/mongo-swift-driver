@@ -208,6 +208,17 @@ public class MongoCursor<T: Codable>: Sequence, IteratorProtocol {
         }
         return nil
     }
+    
+    public func all() throws -> [T] {
+        return try self.map {
+            switch $0 {
+            case .success(let t):
+                return t
+            case .failure(let error):
+                throw error
+            }
+        }
+    }
 
     /// Returns the next `Document` in this cursor, or `nil`. After this function returns `nil`, the caller should use
     /// the `.error` property to check for errors. For tailable cursors, users should also check `isAlive` after this
